@@ -167,53 +167,6 @@ export async function getStockHistory(symbol, days = 30) {
   }
 }
 
-// Get financial news (mock data for now since not in database)
-export async function getFinancialNews(date = 'latest') {
-  console.log(`[marketApi] Fetching financial news for date: ${date}`);
-  await new Promise(resolve => setTimeout(resolve, API_DELAY));
-  
-  // Mock news data since this likely isn't in your friend's database
-  const mockNews = [
-    {
-      headline: "Tesla Reports Strong Q4 Earnings Beat",
-      summary: "Tesla exceeded Wall Street expectations with record vehicle deliveries and improved margins across all segments.",
-      source: "Reuters",
-      publishedAt: "2 hours ago",
-      category: "Earnings"
-    },
-    {
-      headline: "Apple Unveils Revolutionary AI Features",
-      summary: "Apple announced significant AI improvements across iOS and macOS, focusing on privacy-first machine learning.",
-      source: "TechCrunch", 
-      publishedAt: "4 hours ago",
-      category: "Technology"
-    },
-    {
-      headline: "Federal Reserve Hints at Rate Changes",
-      summary: "Fed officials suggest potential policy shifts following latest inflation data and employment figures.",
-      source: "WSJ",
-      publishedAt: "6 hours ago", 
-      category: "Policy"
-    },
-    {
-      headline: "Microsoft Cloud Revenue Surges 40%",
-      summary: "Azure and Office 365 drive record quarterly growth as enterprise adoption accelerates post-pandemic.",
-      source: "CNBC",
-      publishedAt: "8 hours ago",
-      category: "Earnings"
-    },
-    {
-      headline: "Bitcoin Reaches New Monthly High",
-      summary: "Cryptocurrency markets rally on institutional adoption news and regulatory clarity from major economies.",
-      source: "Bloomberg",
-      publishedAt: "12 hours ago",
-      category: "Crypto"
-    }
-  ];
-  
-  console.log('[marketApi] Returning mock financial news data');
-  return mockNews;
-}
 
 // Export API configuration for debugging
 export const API_CONFIG = {

@@ -2,7 +2,6 @@
 import ThemeToggle from '../components/ThemeToggle';
 import MarketOverview from './components/MarketOverview';
 import PopularStocks from './components/PopularStocks';
-import NewsFeed from './components/NewsFeed';
 
 export default function Dashboard() {
   // PSEUDOCODE: Main dashboard page with theme-aware layout and financial components
@@ -46,7 +45,7 @@ export default function Dashboard() {
         </div>
           
         {/* Popular Stocks Section */}
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-6">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
           {/* PSEUDOCODE: Card container for individual stock data */}
           
           <h2 className="text-2xl font-semibold mb-4">Popular Stocks</h2>
@@ -54,17 +53,6 @@ export default function Dashboard() {
           
           <PopularStocks />
           {/* PSEUDOCODE: Component displaying AAPL, GOOGL, MSFT, TSLA with charts and clickable cards */}
-        </div>
-          
-        {/* News Feed Section */}
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-          {/* PSEUDOCODE: Card container for financial news articles */}
-          
-          <h2 className="text-2xl font-semibold mb-4">Latest News</h2>
-          {/* PSEUDOCODE: Section header */}
-          
-          <NewsFeed />
-          {/* PSEUDOCODE: Component displaying categorized financial news with sources and summaries */}
         </div>
         
       </div>

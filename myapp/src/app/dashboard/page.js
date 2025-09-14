@@ -15,6 +15,12 @@ import PopularStocks from './components/PopularStocks';
 // LOCATION: './components/PopularStocks' = current folder, then into components
 // CONTAINS: Mock stock data for 4 popular companies with prices and % changes
 
+import NewsFeed from './components/NewsFeed';
+// PSEUDOCODE: Import the news feed component
+// PURPOSE: Display latest financial news articles with headlines and summaries
+// LOCATION: './components/NewsFeed' = current folder, then into components
+// CONTAINS: Mock news data with categorized articles from major financial sources
+
 export default function Dashboard() {
 // PSEUDOCODE: Create the main dashboard page component
 // PURPOSE: Display the financial dashboard with all sections
@@ -119,8 +125,13 @@ export default function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Latest News</h2>
             {/* PSEUDOCODE: Section title */}
             
-            <p className="text-gray-600 dark:text-gray-300">Financial news will go here</p>
-            {/* PSEUDOCODE: Placeholder text for news feed */}
+            <NewsFeed />
+            {/* PSEUDOCODE: Display the NewsFeed component */}
+            {/* SHOWS: 5 financial news articles with headlines, summaries, and sources */}
+            {/* FEATURES: Color-coded category badges, hover effects, publication times */}
+            {/* LAYOUT: Vertical stack of news cards with consistent spacing */}
+            {/* SOURCES: Reuters, TechCrunch, WSJ, CNBC, Bloomberg */}
+            {/* CATEGORIES: Earnings (green), Technology (blue), Policy (purple), Crypto (orange) */}
           </div>
           
         </div>

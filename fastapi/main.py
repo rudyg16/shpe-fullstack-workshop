@@ -2,6 +2,17 @@ from fastapi import FastAPI
 from datetime import date, timedelta
 from typing import Optional
 import sqlite3
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],   # allow GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],   # allow all headers
+)
 
 app = FastAPI()
 DB_PATH = "./db/market.db"

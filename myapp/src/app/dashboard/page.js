@@ -3,6 +3,18 @@ import ThemeToggle from '../components/ThemeToggle';
 // PURPOSE: Allows users to switch between light/dark mode
 // LOCATION: '../components/ThemeToggle' = go up one folder, then into components
 
+import MarketOverview from './components/MarketOverview';
+// PSEUDOCODE: Import the market overview component
+// PURPOSE: Display major market indices (S&P 500, NASDAQ, DOW) with mock data
+// LOCATION: './components/MarketOverview' = current folder, then into components
+// CONTAINS: Mock financial data for 3 major indices with prices and % changes
+
+import PopularStocks from './components/PopularStocks';
+// PSEUDOCODE: Import the popular stocks component
+// PURPOSE: Display individual company stocks (AAPL, GOOGL, MSFT, TSLA) with mock data
+// LOCATION: './components/PopularStocks' = current folder, then into components
+// CONTAINS: Mock stock data for 4 popular companies with prices and % changes
+
 export default function Dashboard() {
 // PSEUDOCODE: Create the main dashboard page component
 // PURPOSE: Display the financial dashboard with all sections
@@ -77,10 +89,12 @@ export default function Dashboard() {
             {/* font-semibold = Semi-bold font weight */}
             {/* mb-4 = Margin bottom (space below title) */}
             
-            <p className="text-gray-600 dark:text-gray-300">S&P 500, NASDAQ, DOW will go here</p>
-            {/* PSEUDOCODE: Placeholder text with theme-aware color */}
-            {/* text-gray-600 = Medium gray text in light mode */}
-            {/* dark:text-gray-300 = Light gray text in dark mode */}
+            <MarketOverview />
+            {/* PSEUDOCODE: Display the MarketOverview component */}
+            {/* SHOWS: S&P 500, NASDAQ, and DOW indices with mock data */}
+            {/* LAYOUT: 3-column grid with price, change amount, and percentage */}
+            {/* COLORS: Green for gains (↗), red for losses (↘) */}
+            {/* DATA: Mock financial data that will be replaced with real API calls later */}
           </div>
           
           {/* Popular Stocks Section */}
@@ -90,8 +104,12 @@ export default function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Popular Stocks</h2>
             {/* PSEUDOCODE: Section title */}
             
-            <p className="text-gray-600 dark:text-gray-300">AAPL, GOOGL, MSFT charts will go here</p>
-            {/* PSEUDOCODE: Placeholder text for stock charts */}
+            <PopularStocks />
+            {/* PSEUDOCODE: Display the PopularStocks component */}
+            {/* SHOWS: Apple, Google, Microsoft, and Tesla stocks with mock data */}
+            {/* LAYOUT: Responsive grid - 1 column mobile, 2 columns tablet, 4 columns desktop */}
+            {/* FEATURES: Hover effects, color-coded changes, stock symbols */}
+            {/* DATA: Mock stock prices and percentage changes */}
           </div>
           
           {/* News Feed Section */}

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from './components/ThemeProvider';
 import "./globals.css";
 
+// PSEUDOCODE: Configure Google Fonts for consistent typography
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,6 +19,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  // PSEUDOCODE: Root layout wraps entire app with theme context and font variables
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>

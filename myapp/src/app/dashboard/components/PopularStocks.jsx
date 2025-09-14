@@ -1,97 +1,134 @@
-export default function PopularStocks() {
-// PSEUDOCODE: Create component to display popular individual stocks
-// PURPOSE: Show major company stocks (AAPL, GOOGL, MSFT, TSLA) with prices and changes
-// DISPLAYS: Company name, stock symbol, current price, and percentage change
+'use client';
+// PSEUDOCODE: Client component for async data fetching and state management
+import { useState, useEffect } from 'react';
+import { getPopularStocks } from '../../../services/marketApi';
+import MiniChart, { generateMockTrendData } from './MiniChart';
+import StockModal from './StockModal';
 
-  const popularStocks = [
-    // PSEUDOCODE: Array of popular stock objects with financial data
-    // STRUCTURE: Each object has company name, stock symbol, price, and percentage change
-    {
-      name: "Apple",             // Company name
-      symbol: "AAPL",            // Stock ticker symbol
-      price: 175.43,             // Current stock price
-      changePercent: 2.15        // Percentage change (positive = up)
-    },
-    {
-      name: "Google",
-      symbol: "GOOGL", 
-      price: 142.68,
-      changePercent: -0.85       // Negative = stock down
-    },
-    {
-      name: "Microsoft",
-      symbol: "MSFT",
-      price: 378.85,
-      changePercent: 1.20
-    },
-    {
-      name: "Tesla",
-      symbol: "TSLA",
-      price: 248.50,
-      changePercent: 3.45
-    }
-  ];
+export default function PopularStocks() {
+  // PSEUDOCODE: Component displaying popular stocks with charts and click functionality
+  const [stockData, setStockData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // PSEUDOCODE: State management for API data, loading status, and error handling
+
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // PSEUDOCODE: Modal state for displaying detailed stock information
+
+  const handleStockClick = (stock) => {
+    setSelectedStock(stock);
+    setIsModalOpen(true);
+  };
+  // PSEUDOCODE: Handler to open modal with selected stock details
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedStock(null);
+  };
+  // PSEUDOCODE: Handler to close modal and clear selection
+
+  useEffect(() => {
+    // PSEUDOCODE: Fetch popular stock data on component mount
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getPopularStocks('latest');
+        setStockData(data);
+      } catch (err) {
+        console.error('Error fetching stock data:', err);
+        setError('Failed to load stock data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading stock data...</span>
+      </div>
+      // PSEUDOCODE: Loading spinner with animated icon and text
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600 dark:text-red-400 mb-2">⚠️ {error}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Check console for details</p>
+      </div>
+      // PSEUDOCODE: Error state with warning icon and helper text
+    );
+  }
+
+  if (!stockData || stockData.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 dark:text-gray-400">No stock data available</p>
+      </div>
+      // PSEUDOCODE: Empty state when no data is returned
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* PSEUDOCODE: Create responsive grid layout for stock cards */}
-      {/* grid-cols-1 = 1 column on mobile (stacked) */}
-      {/* md:grid-cols-2 = 2 columns on medium screens (tablets) */}
-      {/* lg:grid-cols-4 = 4 columns on large screens (desktop) */}
-      {/* gap-4 = Space between grid items */}
+      {/* PSEUDOCODE: Responsive grid layout - 1 column mobile, 2 tablet, 4 desktop */}
       
-      {popularStocks.map((stock) => (
-        // PSEUDOCODE: Loop through each stock and create a card
-        // map() = Create one card for each item in popularStocks array
-        // stock = Current stock object (Apple, Google, Microsoft, or Tesla)
-        
-        <div key={stock.symbol} className="bg-white dark:bg-gray-700 p-4 rounded-lg border hover:shadow-lg transition-shadow">
-          {/* PSEUDOCODE: Individual stock card with hover effect */}
-          {/* key={stock.symbol} = Unique identifier for React (AAPL, GOOGL, MSFT, TSLA) */}
-          {/* bg-white dark:bg-gray-700 = White background in light mode, dark gray in dark mode */}
-          {/* p-4 = Padding inside the card */}
-          {/* rounded-lg = Rounded corners */}
-          {/* border = Thin border around card */}
-          {/* hover:shadow-lg = Add shadow when user hovers over card */}
-          {/* transition-shadow = Smooth shadow animation */}
+      {stockData.map((stock) => (
+        <div 
+          key={stock.symbol} 
+          className="bg-white dark:bg-gray-700 p-4 rounded-lg border hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105"
+          onClick={() => handleStockClick(stock)}
+        >
+          {/* PSEUDOCODE: Clickable stock card with hover effects and animations */}
           
-          <h3 className="font-semibold text-lg">{stock.name}</h3>
-          {/* PSEUDOCODE: Display company name (Apple, Google, Microsoft, Tesla) */}
-          {/* font-semibold = Medium bold font */}
-          {/* text-lg = Large text size */}
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="font-semibold">{stock.name}</h3>
+            <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 px-2 py-1 rounded-full">
+              {stock.category}
+            </span>
+          </div>
+          {/* PSEUDOCODE: Header with company name and category badge */}
           
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{stock.symbol}</p>
-          {/* PSEUDOCODE: Display stock ticker symbol (AAPL, GOOGL, MSFT, TSLA) */}
-          {/* text-sm = Small text size */}
-          {/* text-gray-500 dark:text-gray-400 = Medium gray in light mode, lighter gray in dark mode */}
-          {/* mb-2 = Margin bottom (space below symbol) */}
           
-          <p className="text-xl font-bold">${stock.price.toLocaleString()}</p>
-          {/* PSEUDOCODE: Display current stock price with formatting */}
-          {/* text-xl font-bold = Large, bold text */}
-          {/* ${stock.price.toLocaleString()} = Add dollar sign and format with commas */}
-          {/* EXAMPLE: 175.43 becomes $175.43, 378.85 becomes $378.85 */}
+          <p className="text-xl font-bold mb-2">${stock.price.toLocaleString()}</p>
+          {/* PSEUDOCODE: Stock price with comma formatting */}
           
-          <p className={`text-sm font-medium ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {stock.changePercent >= 0 ? '↗' : '↘'} {Math.abs(stock.changePercent)}%
-          </p>
-          {/* PSEUDOCODE: Display percentage change with conditional color and arrow */}
-          {/* text-sm font-medium = Small, medium weight text */}
-          {/* Conditional styling: */}
-          {/*   IF changePercent >= 0 (positive): green color + up arrow ↗ */}
-          {/*   IF changePercent < 0 (negative): red color + down arrow ↘ */}
-          {/* Math.abs() = Show absolute value (removes negative sign for display) */}
-          {/* EXAMPLE: ↗ 2.15% (green) or ↘ 0.85% (red) */}
+          <div className="mb-2">
+            <MiniChart 
+              data={generateMockTrendData(stock.price, 30)} 
+              color={stock.changePercent >= 0 ? "#10B981" : "#EF4444"}
+              height={40}
+            />
+            {/* PSEUDOCODE: Mini trend chart with color-coded lines based on performance */}
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <p className={`text-sm font-medium ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {stock.changePercent >= 0 ? '↗' : '↘'} {Math.abs(stock.changePercent)}%
+            </p>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {stock.date}
+            </span>
+          </div>
+          {/* PSEUDOCODE: Change indicator with directional arrows and date */}
         </div>
       ))}
+      
+      <StockModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        stock={selectedStock}
+        type="stock"
+      />
+      {/* PSEUDOCODE: Modal for displaying detailed stock information */}
     </div>
   );
 }
-// PSEUDOCODE: End of PopularStocks component
-// RESULT: 4 cards showing popular stocks with:
-// - Company name (Apple, Google, Microsoft, Tesla)
-// - Stock symbol (AAPL, GOOGL, MSFT, TSLA)
-// - Current price with dollar formatting
-// - Percentage change with color coding (green=up, red=down)
-// - Responsive layout (1 column mobile, 2 columns tablet, 4 columns desktop)
-// - Hover effects for better user interaction

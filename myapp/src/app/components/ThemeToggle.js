@@ -1,21 +1,11 @@
 'use client';
-// PSEUDOCODE: Tell Next.js "this button needs to work in the browser"
-// WHY NEEDED: We need to handle user clicks and use hooks
-
+// PSEUDOCODE: Client component for click handlers and theme hooks
 import { useTheme } from './ThemeProvider';
-// PSEUDOCODE: Import our custom theme remote control
-// useTheme = The helper function we made to access theme data
-// GETS US: { isDark: true/false, toggleTheme: function }
 
 export default function ThemeToggle() {
-// PSEUDOCODE: Create a toggle button component
-// PURPOSE: Give users a button to switch between light/dark mode
-
+  // PSEUDOCODE: Toggle button component for switching between light/dark themes
   const { isDark, toggleTheme } = useTheme();
-  // PSEUDOCODE: Connect to the theme radio station and get controls
-  // isDark = Current theme state (true=dark, false=light)
-  // toggleTheme = Function to flip the theme when clicked
-  // LIKE: Getting a TV remote that shows current channel and has channel buttons
+  // PSEUDOCODE: Get current theme state and toggle function from context
 
   return (
     <button
@@ -28,13 +18,6 @@ export default function ThemeToggle() {
     >
       {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
     </button>
+    // PSEUDOCODE: Button with theme-aware styling and emoji text showing opposite mode
   );
-  // PSEUDOCODE: Create a button that changes theme when clicked
-  // onClick={toggleTheme} = When clicked, run the toggle function
-  // className = Styling that changes based on current theme
-  //   Light mode: gray background with dark text
-  //   Dark mode: dark background with light text
-  // {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'} = Show opposite of current mode
-  //   IF currently dark → show "Light Mode" (what clicking will do)
-  //   IF currently light → show "Dark Mode" (what clicking will do)
 }

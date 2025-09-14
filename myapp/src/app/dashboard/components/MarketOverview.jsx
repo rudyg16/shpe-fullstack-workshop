@@ -1,83 +1,134 @@
-export default function MarketOverview() {
-// PSEUDOCODE: Create component to display major market indices
-// PURPOSE: Show S&P 500, NASDAQ, and DOW with prices and percentage changes
-// DISPLAYS: Current price, change amount, and percentage with color coding
+'use client';
+// PSEUDOCODE: Client component for async data fetching and state management
+import { useState, useEffect } from 'react';
+import { getMarketIndices } from '../../../services/marketApi';
+import MiniChart, { generateMockTrendData } from './MiniChart';
+import StockModal from './StockModal';
 
-    // Mock data - we'll replace with real API calls later
-    const marketData = [
-      // PSEUDOCODE: Array of market index objects with financial data
-      // STRUCTURE: Each object has name, symbol, price, change amount, and percentage
-      {
-        name: "S&P 500",        // Display name
-        symbol: "SPX",          // Market symbol (for API calls later)
-        price: 4850.25,         // Current index price
-        change: 0.85,           // Dollar amount change
-        changePercent: 0.85     // Percentage change
-      },
-      {
-        name: "NASDAQ",
-        symbol: "IXIC", 
-        price: 15234.18,
-        change: 187.42,
-        changePercent: 1.23
-      },
-      {
-        name: "DOW",
-        symbol: "DJI",
-        price: 35678.42,
-        change: -86.15,         // Negative = market down
-        changePercent: -0.24
+export default function MarketOverview() {
+  // PSEUDOCODE: Component displaying major market indices with charts and click functionality
+  const [marketData, setMarketData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // PSEUDOCODE: State management for API data, loading status, and error handling
+
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // PSEUDOCODE: Modal state for displaying detailed index information
+
+  const handleIndexClick = (index) => {
+    setSelectedIndex(index);
+    setIsModalOpen(true);
+  };
+  // PSEUDOCODE: Handler to open modal with selected index details
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedIndex(null);
+  };
+  // PSEUDOCODE: Handler to close modal and clear selection
+
+  useEffect(() => {
+    // PSEUDOCODE: Fetch market index data on component mount
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getMarketIndices('latest');
+        setMarketData(data);
+      } catch (err) {
+        console.error('Error fetching market data:', err);
+        setError('Failed to load market data. Please try again later.');
+      } finally {
+        setLoading(false);
       }
-    ];
-  
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* PSEUDOCODE: Create responsive grid layout */}
-        {/* grid-cols-1 = 1 column on mobile */}
-        {/* md:grid-cols-3 = 3 columns on medium screens and up */}
-        {/* gap-4 = Space between grid items */}
-        
-        {marketData.map((index) => (
-          // PSEUDOCODE: Loop through each market index and create a card
-          // map() = Create one card for each item in marketData array
-          // index = Current market index object (S&P, NASDAQ, or DOW)
-          
-          <div key={index.symbol} className="bg-white dark:bg-gray-700 p-4 rounded-lg border">
-            {/* PSEUDOCODE: Individual market index card */}
-            {/* key={index.symbol} = Unique identifier for React (SPX, IXIC, DJI) */}
-            {/* bg-white dark:bg-gray-700 = White background in light mode, dark gray in dark mode */}
-            {/* p-4 = Padding inside the card */}
-            {/* rounded-lg = Rounded corners */}
-            {/* border = Thin border around card */}
-            
-            <h3 className="font-semibold text-lg">{index.name}</h3>
-            {/* PSEUDOCODE: Display market name (S&P 500, NASDAQ, DOW) */}
-            {/* font-semibold = Medium bold font */}
-            {/* text-lg = Large text size */}
-            
-            <p className="text-2xl font-bold">${index.price.toLocaleString()}</p>
-            {/* PSEUDOCODE: Display current price with formatting */}
-            {/* text-2xl font-bold = Extra large, bold text */}
-            {/* ${index.price.toLocaleString()} = Add dollar sign and format with commas */}
-            {/* EXAMPLE: 4850.25 becomes $4,850.25 */}
-            
-            <p className={`text-sm ${index.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {index.change >= 0 ? '↗' : '↘'} {index.changePercent}%
-            </p>
-            {/* PSEUDOCODE: Display change with conditional color and arrow */}
-            {/* text-sm = Small text size */}
-            {/* Conditional styling: */}
-            {/*   IF change >= 0 (positive): green color + up arrow ↗ */}
-            {/*   IF change < 0 (negative): red color + down arrow ↘ */}
-            {/* EXAMPLE: ↗ +0.85% (green) or ↘ -0.24% (red) */}
-          </div>
-        ))}
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading market data...</span>
       </div>
+      // PSEUDOCODE: Loading spinner with animated icon and text
     );
   }
-  // PSEUDOCODE: End of MarketOverview component
-  // RESULT: 3 cards showing major market indices with:
-  // - Market name (S&P 500, NASDAQ, DOW)
-  // - Current price with dollar formatting
-  // - Percentage change with color coding (green=up, red=down)
-  // - Responsive layout (1 column mobile, 3 columns desktop)
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600 dark:text-red-400 mb-2">⚠️ {error}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Check console for details</p>
+      </div>
+      // PSEUDOCODE: Error state with warning icon and helper text
+    );
+  }
+
+  if (!marketData || marketData.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 dark:text-gray-400">No market data available</p>
+      </div>
+      // PSEUDOCODE: Empty state when no data is returned
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* PSEUDOCODE: Responsive grid layout for market index cards */}
+      
+      {marketData.map((index) => (
+        <div 
+          key={index.symbol} 
+          className="bg-white dark:bg-gray-700 p-4 rounded-lg border hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105"
+          onClick={() => handleIndexClick(index)}
+        >
+          {/* PSEUDOCODE: Clickable index card with hover effects and animations */}
+          
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="font-semibold text-lg">{index.name}</h3>
+            <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full">
+              {index.category}
+            </span>
+          </div>
+          {/* PSEUDOCODE: Header with index name and category badge */}
+          
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{index.symbol}</p>
+          
+          <p className="text-2xl font-bold mb-3">${index.price.toLocaleString()}</p>
+          {/* PSEUDOCODE: Large price display with comma formatting */}
+          
+          <div className="mb-3">
+            <MiniChart 
+              data={generateMockTrendData(index.price, 30)} 
+              color={index.changePercent >= 0 ? "#10B981" : "#EF4444"}
+              height={50}
+            />
+            {/* PSEUDOCODE: Mini trend chart with color-coded lines based on performance */}
+          </div>
+          
+          <div className="flex items-center">
+            <p className={`text-sm font-medium ${index.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {index.changePercent >= 0 ? '↗' : '↘'} {Math.abs(index.changePercent)}%
+            </p>
+            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+              {index.date}
+            </span>
+          </div>
+          {/* PSEUDOCODE: Change indicator with directional arrows and date */}
+        </div>
+      ))}
+      
+      <StockModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        stock={selectedIndex}
+        type="index"
+      />
+      {/* PSEUDOCODE: Modal for displaying detailed index information */}
+    </div>
+  );
+}

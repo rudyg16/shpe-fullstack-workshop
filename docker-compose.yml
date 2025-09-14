@@ -1,24 +1,30 @@
-version: "3.9"
-
 services:
   backend:
-    build: ./backend
+    build: ./fastapi
     container_name: fastapi-backend
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app   # for local dev hot reload
+      - ./fastapi:/app   # for local dev hot reload
     environment:
       - PYTHONUNBUFFERED=1
 
   frontend:
-    build: ./frontend
+    build: ./myapp
     container_name: nextjs-frontend
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app  # for local dev hot reload
+      - ./myapp:/app  # for local dev hot reload
+      - turbo-cache:/app/.next  # named volume for Turbopack cache
+      - node-modules:/app/node_modules  # named volume for node_modules
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000  # frontend talks to backend
+      - NEXT_PUBLIC_API_URL=http://localhost:8000  # browser talks to backend via host
+      - NODE_ENV=development
     depends_on:
       - backend
+    user: "1001:1001"  # match nextjs user from Dockerfile
+
+volumes:
+  turbo-cache:
+  node-modules:

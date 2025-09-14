@@ -13,8 +13,6 @@ app.add_middleware(
     allow_methods=["*"],   # allow GET, POST, PUT, DELETE, OPTIONS
     allow_headers=["*"],   # allow all headers
 )
-
-app = FastAPI()
 DB_PATH = "./db/market.db"
 
 #All of the query params are optional, but if you leave all of them with nothing, it'll

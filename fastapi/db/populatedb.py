@@ -3,25 +3,28 @@ from kagglehub import KaggleDatasetAdapter
 import pandas as pd
 import sqlite3
 
-# Set the actual file inside the dataset
-file_path = "US_Stock_Data.csv"
-
-# Use dataset_load (not load_dataset, which is deprecated)
+# Load the dataset
 df = kagglehub.dataset_load(
     KaggleDatasetAdapter.PANDAS,
     "muhammadehsan02/us-stock-market-and-commodities-data-2020-2024",
-    file_path,
+    "US_Stock_Data.csv",
 )
-# Remove commas and convert all numeric columns to proper numbers
+
+# --- Clean numeric fields (remove commas, convert to numbers) ---
 for col in df.columns:
     if col not in ["Date", "Unnamed: 0"]:  # skip non-numeric
         df[col] = (
             df[col]
-            .astype(str)                 # ensure string type
-            .str.replace(",", "", regex=False)  # remove commas
+            .astype(str)
+            .str.replace(",", "", regex=False)
         )
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
+# --- Normalize the Date column to YYYY-MM-DD ---
+df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce")
+df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
+
+# --- Mapping: dataset column → (price, volume, symbol, category) ---
 mapping = {
     "Apple": ("Apple_Price", "Apple_Vol.", "AAPL", "STK"),
     "Tesla": ("Tesla_Price", "Tesla_Vol.", "TSLA", "STK"),
@@ -44,7 +47,7 @@ mapping = {
     "Platinum": ("Platinum_Price", "Platinum_Vol.", "PL", "CMD"),
 }
 
-# connect to SQLite
+# --- Insert into SQLite ---
 conn = sqlite3.connect("market.db")
 cursor = conn.cursor()
 
@@ -55,13 +58,15 @@ for _, row in df.iterrows():
         price = row[price_col]
         volume = row[vol_col] if vol_col and vol_col in row else None
 
+        if pd.isna(price):  # skip if no price
+            continue
+
         cursor.execute("""
         INSERT OR IGNORE INTO assets (name, symbol, cat, date, price, volume)
         VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, symbol, cat, date, float(price), volume))
+        """, (name, symbol, cat, date, float(price), int(volume) if pd.notna(volume) else None))
 
 conn.commit()
 conn.close()
+
 print("✅ Insert complete")
-
-
